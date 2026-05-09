@@ -16,27 +16,22 @@ def imports():
     startup_timer.record("import torch")
 
     # Completely remove wandb from sys.modules to prevent any import attempt,
-    # and mock it so that when libraries try to import it, it gets a mock object that appears valid.
+    # and mock it so that when libraries try to import it, it gets a mock object.
     import sys
     from unittest.mock import MagicMock
-    import types
-
-    def create_mock_module(name):
-        mock = types.ModuleType(name)
-        mock.__path__ = []
-        mock.__spec__ = types.SimpleNamespace(origin="built-in")
-        return mock
-
-    wandb_mock = create_mock_module("wandb")
-    sys.modules["wandb"] = wandb_mock
     
-    # Also mock submodules that might be imported, ensuring they have __spec__
-    submodules = [
-        "wandb.sdk", "wandb.sdk.lib", "wandb.proto", 
-        "wandb.proto.wandb_telemetry_pb2", "wandb.util"
-    ]
-    for sub in submodules:
-        sys.modules[sub] = create_mock_module(sub)
+    class MockWandb(MagicMock):
+        def __getattr__(self, name):
+            return MagicMock()
+            
+    wandb_mock = MockWandb()
+    sys.modules["wandb"] = wandb_mock
+    # Also ensure submodules are handled
+    sys.modules["wandb.sdk"] = wandb_mock
+    sys.modules["wandb.sdk.lib"] = wandb_mock
+    sys.modules["wandb.proto"] = wandb_mock
+    sys.modules["wandb.proto.wandb_telemetry_pb2"] = wandb_mock
+    sys.modules["wandb.util"] = wandb_mock
 
     try:
         import pytorch_lightning  # noqa: F401
