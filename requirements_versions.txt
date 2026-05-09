@@ -31,5 +31,5 @@ torch
 torchdiffeq==0.2.3
 torchsde==0.2.6
 transformers>=4.37.0
-httpx>=0.24.0
+httpx==0.24.1
 pillow-avif-plugin==1.4.3
