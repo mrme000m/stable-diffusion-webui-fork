@@ -11,6 +11,18 @@ if ! command -v ngrok &> /dev/null; then
     sudo apt update && sudo apt install ngrok -y
 fi
 
+# Configure ngrok with auth token from GitHub secrets
+if command -v gh &> /dev/null && [[ -n "$GH_TOKEN" ]]; then
+    echo "Configuring ngrok with auth token..."
+    REPO="mrme000m/stable-diffusion-webui-fork"
+    NGROK_TOKEN=$(gh secret view NGROK_AUTHTOKEN --repo "$REPO" 2>/dev/null)
+    if [[ -n "$NGROK_TOKEN" ]]; then
+        ngrok config add-authtoken "$NGROK_TOKEN"
+        echo "Ngrok configured with auth token"
+    fi
+fi
+
+
 # Install directory without trailing slash
 #install_dir="/home/$(whoami)"
 
