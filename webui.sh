@@ -289,12 +289,20 @@ while [[ "$KEEP_GOING" -eq "1" ]]; do
         printf "Accelerating launch.py..."
         printf "\n%s\n" "${delimiter}"
         prepare_tcmalloc
+        # Fix wandb for Python 3.12 compatibility
+        if [[ -n "$COLAB_JUPYTER_IP" ]]; then
+            pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
+        fi
         accelerate launch --num_cpu_threads_per_process=6 "${LAUNCH_SCRIPT}" "$@"
     else
         printf "\n%s\n" "${delimiter}"
         printf "Launching launch.py..."
         printf "\n%s\n" "${delimiter}"
         prepare_tcmalloc
+        # Fix wandb for Python 3.12 compatibility
+        if [[ -n "$COLAB_JUPYTER_IP" ]]; then
+            pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
+        fi
         "${python_cmd}" -u "${LAUNCH_SCRIPT}" "$@"
     fi
 

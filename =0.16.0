@@ -1,0 +1,143 @@
+Collecting wandb
+  Using cached wandb-0.26.1-py3-none-macosx_12_0_arm64.whl.metadata (11 kB)
+Collecting click>=8.0.1 (from wandb)
+  Using cached click-8.3.3-py3-none-any.whl.metadata (2.6 kB)
+Collecting gitpython!=3.1.29,>=1.0.0 (from wandb)
+  Using cached gitpython-3.1.50-py3-none-any.whl.metadata (14 kB)
+Collecting packaging (from wandb)
+  Using cached packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting platformdirs (from wandb)
+  Using cached platformdirs-4.9.6-py3-none-any.whl.metadata (4.7 kB)
+Collecting protobuf!=5.28.0,!=5.29.0,<8,>4.21.0 (from wandb)
+  Using cached protobuf-7.34.1-cp310-abi3-macosx_10_9_universal2.whl.metadata (595 bytes)
+Collecting pydantic<3 (from wandb)
+  Using cached pydantic-2.13.4-py3-none-any.whl.metadata (109 kB)
+Collecting pyyaml (from wandb)
+  Using cached pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl.metadata (2.4 kB)
+Collecting requests<3,>=2.0.0 (from wandb)
+  Using cached requests-2.33.1-py3-none-any.whl.metadata (4.8 kB)
+Collecting sentry-sdk>=2.0.0 (from wandb)
+  Using cached sentry_sdk-2.59.0-py2.py3-none-any.whl.metadata (10 kB)
+Collecting typing-extensions<5,>=4.8 (from wandb)
+  Using cached typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting annotated-types>=0.6.0 (from pydantic<3->wandb)
+  Using cached annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.46.4 (from pydantic<3->wandb)
+  Using cached pydantic_core-2.46.4-cp312-cp312-macosx_11_0_arm64.whl.metadata (6.6 kB)
+Collecting typing-inspection>=0.4.2 (from pydantic<3->wandb)
+  Using cached typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+Collecting charset_normalizer<4,>=2 (from requests<3,>=2.0.0->wandb)
+  Using cached charset_normalizer-3.4.7-cp312-cp312-macosx_10_13_universal2.whl.metadata (40 kB)
+Collecting idna<4,>=2.5 (from requests<3,>=2.0.0->wandb)
+  Using cached idna-3.13-py3-none-any.whl.metadata (8.0 kB)
+Collecting urllib3<3,>=1.26 (from requests<3,>=2.0.0->wandb)
+  Using cached urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+Collecting certifi>=2023.5.7 (from requests<3,>=2.0.0->wandb)
+  Using cached certifi-2026.4.22-py3-none-any.whl.metadata (2.5 kB)
+Collecting gitdb<5,>=4.0.1 (from gitpython!=3.1.29,>=1.0.0->wandb)
+  Using cached gitdb-4.0.12-py3-none-any.whl.metadata (1.2 kB)
+Collecting smmap<6,>=3.0.1 (from gitdb<5,>=4.0.1->gitpython!=3.1.29,>=1.0.0->wandb)
+  Using cached smmap-5.0.3-py3-none-any.whl.metadata (4.6 kB)
+Using cached wandb-0.26.1-py3-none-macosx_12_0_arm64.whl (24.9 MB)
+Using cached protobuf-7.34.1-cp310-abi3-macosx_10_9_universal2.whl (429 kB)
+Using cached pydantic-2.13.4-py3-none-any.whl (472 kB)
+Using cached pydantic_core-2.46.4-cp312-cp312-macosx_11_0_arm64.whl (2.0 MB)
+Using cached requests-2.33.1-py3-none-any.whl (64 kB)
+Using cached charset_normalizer-3.4.7-cp312-cp312-macosx_10_13_universal2.whl (311 kB)
+Using cached idna-3.13-py3-none-any.whl (68 kB)
+Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Using cached urllib3-2.7.0-py3-none-any.whl (131 kB)
+Using cached annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Using cached certifi-2026.4.22-py3-none-any.whl (135 kB)
+Using cached click-8.3.3-py3-none-any.whl (110 kB)
+Using cached gitpython-3.1.50-py3-none-any.whl (212 kB)
+Using cached gitdb-4.0.12-py3-none-any.whl (62 kB)
+Using cached smmap-5.0.3-py3-none-any.whl (24 kB)
+Using cached sentry_sdk-2.59.0-py2.py3-none-any.whl (468 kB)
+Using cached typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Using cached packaging-26.2-py3-none-any.whl (100 kB)
+Using cached platformdirs-4.9.6-py3-none-any.whl (21 kB)
+Using cached pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl (173 kB)
+Installing collected packages: urllib3, typing-extensions, smmap, pyyaml, protobuf, platformdirs, packaging, idna, click, charset_normalizer, certifi, annotated-types, typing-inspection, sentry-sdk, requests, pydantic-core, gitdb, pydantic, gitpython, wandb
+  Attempting uninstall: urllib3
+    Found existing installation: urllib3 2.7.0
+    Uninstalling urllib3-2.7.0:
+      Successfully uninstalled urllib3-2.7.0
+  Attempting uninstall: typing-extensions
+    Found existing installation: typing_extensions 4.15.0
+    Uninstalling typing_extensions-4.15.0:
+      Successfully uninstalled typing_extensions-4.15.0
+  Attempting uninstall: smmap
+    Found existing installation: smmap 5.0.3
+    Uninstalling smmap-5.0.3:
+      Successfully uninstalled smmap-5.0.3
+  Attempting uninstall: pyyaml
+    Found existing installation: PyYAML 6.0.3
+    Uninstalling PyYAML-6.0.3:
+      Successfully uninstalled PyYAML-6.0.3
+  Attempting uninstall: protobuf
+    Found existing installation: protobuf 7.34.1
+    Uninstalling protobuf-7.34.1:
+      Successfully uninstalled protobuf-7.34.1
+  Attempting uninstall: platformdirs
+    Found existing installation: platformdirs 4.9.6
+    Uninstalling platformdirs-4.9.6:
+      Successfully uninstalled platformdirs-4.9.6
+  Attempting uninstall: packaging
+    Found existing installation: packaging 26.2
+    Uninstalling packaging-26.2:
+      Successfully uninstalled packaging-26.2
+  Attempting uninstall: idna
+    Found existing installation: idna 3.13
+    Uninstalling idna-3.13:
+      Successfully uninstalled idna-3.13
+  Attempting uninstall: click
+    Found existing installation: click 8.3.3
+    Uninstalling click-8.3.3:
+      Successfully uninstalled click-8.3.3
+  Attempting uninstall: charset_normalizer
+    Found existing installation: charset-normalizer 3.4.7
+    Uninstalling charset-normalizer-3.4.7:
+      Successfully uninstalled charset-normalizer-3.4.7
+  Attempting uninstall: certifi
+    Found existing installation: certifi 2026.4.22
+    Uninstalling certifi-2026.4.22:
+      Successfully uninstalled certifi-2026.4.22
+  Attempting uninstall: annotated-types
+    Found existing installation: annotated-types 0.7.0
+    Uninstalling annotated-types-0.7.0:
+      Successfully uninstalled annotated-types-0.7.0
+  Attempting uninstall: typing-inspection
+    Found existing installation: typing-inspection 0.4.2
+    Uninstalling typing-inspection-0.4.2:
+      Successfully uninstalled typing-inspection-0.4.2
+  Attempting uninstall: sentry-sdk
+    Found existing installation: sentry-sdk 2.59.0
+    Uninstalling sentry-sdk-2.59.0:
+      Successfully uninstalled sentry-sdk-2.59.0
+  Attempting uninstall: requests
+    Found existing installation: requests 2.33.1
+    Uninstalling requests-2.33.1:
+      Successfully uninstalled requests-2.33.1
+  Attempting uninstall: pydantic-core
+    Found existing installation: pydantic_core 2.46.4
+    Uninstalling pydantic_core-2.46.4:
+      Successfully uninstalled pydantic_core-2.46.4
+  Attempting uninstall: gitdb
+    Found existing installation: gitdb 4.0.12
+    Uninstalling gitdb-4.0.12:
+      Successfully uninstalled gitdb-4.0.12
+  Attempting uninstall: pydantic
+    Found existing installation: pydantic 2.13.4
+    Uninstalling pydantic-2.13.4:
+      Successfully uninstalled pydantic-2.13.4
+  Attempting uninstall: gitpython
+    Found existing installation: GitPython 3.1.50
+    Uninstalling GitPython-3.1.50:
+      Successfully uninstalled GitPython-3.1.50
+  Attempting uninstall: wandb
+    Found existing installation: wandb 0.26.1
+    Uninstalling wandb-0.26.1:
+      Successfully uninstalled wandb-0.26.1
+
+Successfully installed annotated-types-0.7.0 certifi-2026.4.22 charset_normalizer-3.4.7 click-8.3.3 gitdb-4.0.12 gitpython-3.1.50 idna-3.13 packaging-26.2 platformdirs-4.9.6 protobuf-7.34.1 pydantic-2.13.4 pydantic-core-2.46.4 pyyaml-6.0.3 requests-2.33.1 sentry-sdk-2.59.0 smmap-5.0.3 typing-extensions-4.15.0 typing-inspection-0.4.2 urllib3-2.7.0 wandb-0.26.1
