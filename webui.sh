@@ -293,6 +293,14 @@ while [[ "$KEEP_GOING" -eq "1" ]]; do
         if [[ -n "$COLAB_JUPYTER_IP" ]] || [[ -d /content ]]; then
             "${python_cmd}" -m pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
             "${python_cmd}" -m pip install -r requirements_versions.txt -q
+            # Remove CPU-only flags from COMMANDLINE_ARGS if running on Colab and GPU is available
+            if nvidia-smi &>/dev/null; then
+                export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--use-cpu all/}"
+                export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--skip-torch-cuda-test/}"
+                export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--precision full/}"
+                export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--no-half/}"
+                export COMMANDLINE_ARGS="$COMMANDLINE_ARGS --xformers --share"
+            fi
         fi
         accelerate launch --num_cpu_threads_per_process=6 "${LAUNCH_SCRIPT}" "$@"
     else
@@ -304,6 +312,14 @@ while [[ "$KEEP_GOING" -eq "1" ]]; do
         if [[ -n "$COLAB_JUPYTER_IP" ]] || [[ -d /content ]]; then
             "${python_cmd}" -m pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
             "${python_cmd}" -m pip install -r requirements_versions.txt -q
+            # Remove CPU-only flags from COMMANDLINE_ARGS if running on Colab and GPU is available
+            if nvidia-smi &>/dev/null; then
+                export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--use-cpu all/}"
+                export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--skip-torch-cuda-test/}"
+                export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--precision full/}"
+                export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--no-half/}"
+                export COMMANDLINE_ARGS="$COMMANDLINE_ARGS --xformers --share"
+            fi
         fi
         "${python_cmd}" -u "${LAUNCH_SCRIPT}" "$@"
     fi

@@ -36,10 +36,19 @@ def imports():
 
     # Tensorflow might be broken due to protobuf downgrade in Colab.
     # We mock it so transformers doesn't crash when trying to import it.
+    # We check if it's actually usable by trying to import a core component.
     try:
         import tensorflow
+        from tensorflow.core.framework import attr_value_pb2  # This often triggers the protobuf error
     except Exception:
         sys.modules["tensorflow"] = MockModule()
+        sys.modules["tensorflow.python"] = MockModule()
+        sys.modules["tensorflow.python.platform"] = MockModule()
+        sys.modules["tensorflow.core"] = MockModule()
+        sys.modules["tensorflow.core.framework"] = MockModule()
+        sys.modules["tensorflow._api"] = MockModule()
+        sys.modules["tensorflow._api.v2"] = MockModule()
+        sys.modules["tensorflow._api.v2.__internal__"] = MockModule()
 
     try:
         import pytorch_lightning  # noqa: F401
