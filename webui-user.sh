@@ -11,14 +11,15 @@ if ! command -v ngrok &> /dev/null; then
     sudo apt update && sudo apt install ngrok -y
 fi
 
-# Configure ngrok with auth token from GitHub secrets
-if command -v gh &> /dev/null && [[ -n "$GH_TOKEN" ]]; then
+# Configure ngrok with auth token from GitHub secrets or env
+if command -v ngrok &> /dev/null; then
     echo "Configuring ngrok with auth token..."
-    REPO="mrme000m/stable-diffusion-webui-fork"
-    NGROK_TOKEN=$(gh secret view NGROK_AUTHTOKEN --repo "$REPO" 2>/dev/null)
-    if [[ -n "$NGROK_TOKEN" ]]; then
-        ngrok config add-authtoken "$NGROK_TOKEN"
-        echo "Ngrok configured with auth token"
+    # Try to get token from env first (set in Colab with NGROK_AUTHTOKEN)
+    if [[ -n "$NGROK_AUTHTOKEN" ]]; then
+        ngrok config add-authtoken "$NGROK_AUTHTOKEN"
+        echo "Ngrok configured with auth token from NGROK_AUTHTOKEN env"
+    else
+        echo "Warning: NGROK_AUTHTOKEN not set, ngrok may not work"
     fi
 fi
 
@@ -42,8 +43,9 @@ export venv_dir="-"
 # We set an env var that launch.py can check
 export PIP_PREFER_BINARY=1
 
-# Install compatible wandb version (fixes Python 3.12 ImportErrors)
-pip install --force-reinstall wandb>=0.16.0 --prefer-binary 2>/dev/null || true
+# Fix wandb for Python 3.12 compatibility (uninstall broken version first)
+pip uninstall wandb -y 2>/dev/null || true
+pip install --no-cache-dir "wandb>=0.16.0" --prefer-binary 2>/dev/null || true
 
 # install command for torch
 export TORCH_COMMAND="pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"

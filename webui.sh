@@ -51,6 +51,13 @@ then
   python_cmd="python3"
 fi
 
+# Fix wandb for Python 3.12 compatibility in Colab
+if [[ -n "$COLAB_JUPYTER_IP" ]] || [[ -d /content ]]; then
+    echo "Fixing wandb for Python 3.12 compatibility..."
+    "${python_cmd}" -m pip uninstall wandb -y 2>/dev/null || true
+    "${python_cmd}" -m pip install --no-cache-dir "wandb>=0.16.0" --prefer-binary 2>/dev/null || true
+fi
+
 # git executable
 if [[ -z "${GIT}" ]]
 then
@@ -289,11 +296,8 @@ while [[ "$KEEP_GOING" -eq "1" ]]; do
         printf "Accelerating launch.py..."
         printf "\n%s\n" "${delimiter}"
         prepare_tcmalloc
-        # Fix wandb for Python 3.12 compatibility
+        # Remove CPU-only flags from COMMANDLINE_ARGS if running on Colab and GPU is available
         if [[ -n "$COLAB_JUPYTER_IP" ]] || [[ -d /content ]]; then
-            "${python_cmd}" -m pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
-            "${python_cmd}" -m pip install -r requirements_versions.txt -q
-            # Remove CPU-only flags from COMMANDLINE_ARGS if running on Colab and GPU is available
             if nvidia-smi &>/dev/null; then
                 export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--use-cpu all/}"
                 export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--skip-torch-cuda-test/}"
@@ -308,11 +312,8 @@ while [[ "$KEEP_GOING" -eq "1" ]]; do
         printf "Launching launch.py..."
         printf "\n%s\n" "${delimiter}"
         prepare_tcmalloc
-        # Fix wandb for Python 3.12 compatibility
+        # Remove CPU-only flags from COMMANDLINE_ARGS if running on Colab and GPU is available
         if [[ -n "$COLAB_JUPYTER_IP" ]] || [[ -d /content ]]; then
-            "${python_cmd}" -m pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
-            "${python_cmd}" -m pip install -r requirements_versions.txt -q
-            # Remove CPU-only flags from COMMANDLINE_ARGS if running on Colab and GPU is available
             if nvidia-smi &>/dev/null; then
                 export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--use-cpu all/}"
                 export COMMANDLINE_ARGS="${COMMANDLINE_ARGS//--skip-torch-cuda-test/}"
