@@ -38,8 +38,9 @@ python_cmd="python3"
 # python3 venv without trailing slash (defaults to ${install_dir}/${clone_dir}/venv)
 export venv_dir="-"
 
-# Install pre-built tokenizers to avoid build issues
-pip install tokenizers --prefer-binary 2>/dev/null || true
+# Install tokenizers with --prefer-binary flag - this gets run BEFORE requirements.install
+# We set an env var that launch.py can check
+export PIP_PREFER_BINARY=1
 
 # install command for torch
 export TORCH_COMMAND="pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"
