@@ -1,21 +1,27 @@
 #!/bin/bash
 
 # Tunnel helper for Google Colab VM access via 136.114.50.82:2222
-# Usage: Locally: ./tunnel-colab.sh
-#        In Colab: GH_TOKEN=xxx ./tunnel-colab.sh (runs server setup mode)
+# Usage: Local: ./tunnel-colab.sh
+#        Colab:  GH_TOKEN=xxx REPO=owner/repo ./tunnel-colab.sh
 
 set -e
 
-REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+# Default repo - can be overridden via env var
+REPO="${REPO:-mrme000m/stable-diffusion-webui-fork}"
 SSH_DIR="$HOME/.colab-tunnel"
 
-# Detect if running in Colab
-if [ -n "$COLAB_JUPYTER_IP" ] || grep -q "googleusercontent" /etc/hosts 2>/dev/null || [ -n "$IN_COLAB" ]; then
+# Detect if running in Colab (multiple methods)
+IN_COLAB=0
+if [ -n "$COLAB_JUPYTER_IP" ] || [ -f "/content" ] || grep -q "googleusercontent" /etc/hosts 2>/dev/null; then
+    IN_COLAB=1
+fi
+
+if [ "$IN_COLAB" = "1" ]; then
     echo "=== Setting up SSH server in Colab ==="
     
-    # Get GH token from environment or prompt
+    # Get GH token from environment
     if [ -z "$GH_TOKEN" ]; then
-        echo "Error: GH_TOKEN not set. Set it as env var: GH_TOKEN=xxx"
+        echo "Error: GH_TOKEN not set. Usage: GH_TOKEN=xxx REPO=owner/repo bash script.sh"
         exit 1
     fi
     
@@ -23,67 +29,61 @@ if [ -n "$COLAB_JUPYTER_IP" ] || grep -q "googleusercontent" /etc/hosts 2>/dev/n
     if ! command -v gh &>/dev/null; then
         echo "Installing GitHub CLI..."
         curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-        sudo apt-add-repository https://cli.github.com/packages
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
         sudo apt update && sudo apt install -y gh
     fi
     
-    # Fetch SSH public key from repo secrets
-    echo "Fetching SSH keys from repo secrets..."
+    echo "Fetching SSH_PRIVATE_KEY from repo secrets..."
     SSH_KEY=$(gh secret view SSH_PRIVATE_KEY --repo "$REPO")
     
     mkdir -p ~/.ssh
     echo "$SSH_KEY" > ~/.ssh/id_ed25519
     chmod 600 ~/.ssh/id_ed25519
     
-    # Create authorized_keys for incoming SSH connections
-    SSH_DIR="$HOME/.ssh"
-    mkdir -p "$SSH_DIR"
-    
     # Extract public key
     ssh-keygen -y -f ~/.ssh/id_ed25519 > ~/.ssh/id_ed25519.pub
     
-    # Install and configure SSH server
+    # Install SSH server
+    echo "Installing OpenSSH server..."
     sudo apt update -qq
     sudo apt install -y -qq openssh-server
     
-    # Configure SSH to run on port 2222
+    # Configure SSH for port 2222
     sudo sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config
     sudo sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-    sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+    echo "PasswordAuthentication yes" | sudo tee -a /etc/ssh/sshd_config
     
-    # Restart SSH service
-    sudo service ssh restart || sudo /usr/sbin/sshd
+    # Restart SSH
+    sudo service ssh restart 2>/dev/null || sudo /usr/sbin/sshd
     
     echo "✓ SSH server running on port 2222"
-    echo "✓ Your public key is authorized"
     echo ""
     echo "From your local machine, connect with:"
-    echo "  ssh -p 2222 -i ~/.ssh/id_ed25519 m@136.114.50.82"
+    echo "  ssh -i ~/.ssh/id_ed25519 -p 2222 m@136.114.50.82"
     
 else
     # Local machine mode
     echo "=== Colab SSH Tunnel Setup (Local Mode) ==="
     
-    # Ask for GitHub auth token if not set
+    # Try to detect repo, or use default
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+    fi
+    
     if [ -z "$GH_TOKEN" ]; then
         read -p "Enter your GitHub Auth Token: " GH_TOKEN
         export GH_TOKEN
     fi
     
-    # Fetch SSH private key from repo secrets
     echo "Fetching SSH_PRIVATE_KEY from repo secrets..."
     SSH_KEY=$(gh secret view SSH_PRIVATE_KEY --repo "$REPO")
     
     mkdir -p "$SSH_DIR"
     
-    # Save SSH key
     echo "$SSH_KEY" > "$SSH_DIR/id_ed25519"
     chmod 600 "$SSH_DIR/id_ed25519"
-    
-    # Create known_hosts placeholder
     touch "$SSH_DIR/known_hosts"
     
-    # SSH config for tunnel
     cat > "$SSH_DIR/config" << CONFIG
 Host colab-tunnel
     HostName 136.114.50.82
@@ -96,6 +96,5 @@ CONFIG
     
     echo "✓ SSH config created at $SSH_DIR/config"
     echo ""
-    echo "=== Connect to Colab VM ==="
-    echo "ssh -F $SSH_DIR/config colab-tunnel"
+    echo "Connect: ssh -F $SSH_DIR/config colab-tunnel"
 fi
