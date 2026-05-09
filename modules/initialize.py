@@ -14,8 +14,18 @@ def imports():
 
     import torch  # noqa: F401
     startup_timer.record("import torch")
-    import pytorch_lightning  # noqa: F401
-    startup_timer.record("import torch")
+
+    # Fix wandb import error on some environments (like Google Colab with Python 3.12)
+    # We don't use wandb, but pytorch_lightning pulls it in.
+    try:
+        import pytorch_lightning  # noqa: F401
+    except Exception:
+        import sys
+        from unittest.mock import MagicMock
+        sys.modules["wandb"] = MagicMock()
+        import pytorch_lightning  # noqa: F401
+
+    startup_timer.record("import pytorch_lightning")
     warnings.filterwarnings(action="ignore", category=DeprecationWarning, module="pytorch_lightning")
     warnings.filterwarnings(action="ignore", category=UserWarning, module="torchvision")
 

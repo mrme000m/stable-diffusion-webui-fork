@@ -97,7 +97,7 @@ printf "\e[1m\e[34mTested on Debian 11 (Bullseye), Fedora 34+ and openSUSE Leap 
 printf "\n%s\n" "${delimiter}"
 
 # Do not run as root
-if [[ $(id -u) -eq 0 && can_run_as_root -eq 0 && -z "$COLAB_JUPYTER_IP" ]]
+if [[ $(id -u) -eq 0 && can_run_as_root -eq 0 && -z "$COLAB_JUPYTER_IP" && ! -d /content ]]
 then
     printf "\n%s\n" "${delimiter}"
     printf "\e[1m\e[31mERROR: This script must not be launched as root, aborting...\e[0m"
@@ -290,8 +290,8 @@ while [[ "$KEEP_GOING" -eq "1" ]]; do
         printf "\n%s\n" "${delimiter}"
         prepare_tcmalloc
         # Fix wandb for Python 3.12 compatibility
-        if [[ -n "$COLAB_JUPYTER_IP" ]]; then
-            pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
+        if [[ -n "$COLAB_JUPYTER_IP" ]] || [[ -d /content ]]; then
+            "${python_cmd}" -m pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
         fi
         accelerate launch --num_cpu_threads_per_process=6 "${LAUNCH_SCRIPT}" "$@"
     else
@@ -300,8 +300,8 @@ while [[ "$KEEP_GOING" -eq "1" ]]; do
         printf "\n%s\n" "${delimiter}"
         prepare_tcmalloc
         # Fix wandb for Python 3.12 compatibility
-        if [[ -n "$COLAB_JUPYTER_IP" ]]; then
-            pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
+        if [[ -n "$COLAB_JUPYTER_IP" ]] || [[ -d /content ]]; then
+            "${python_cmd}" -m pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
         fi
         "${python_cmd}" -u "${LAUNCH_SCRIPT}" "$@"
     fi
