@@ -3,6 +3,14 @@
 # Uncomment and change the variables below to your need:#
 #########################################################
 
+# Install ngrok for tunneling if not installed
+if ! command -v ngrok &> /dev/null; then
+    echo "Installing ngrok..."
+    curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+    echo "deb https://ngrok-agent.s3.amazonaws.com bookworm main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+    sudo apt update && sudo apt install ngrok -y
+fi
+
 # Install directory without trailing slash
 #install_dir="/home/$(whoami)"
 
