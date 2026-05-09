@@ -16,15 +16,16 @@ def imports():
     startup_timer.record("import torch")
 
     # Completely remove wandb from sys.modules to prevent any import attempt,
-    # and mock it so that when libraries try to import it, it gets a mock object.
+    # and mock it so that when libraries try to import it, it gets a mock object that appears valid.
     import sys
     from unittest.mock import MagicMock
-    
-    class MockWandb(MagicMock):
+    import types
+
+    class MockModule(MagicMock):
         def __getattr__(self, name):
             return MagicMock()
-            
-    wandb_mock = MockWandb()
+
+    wandb_mock = MockModule()
     sys.modules["wandb"] = wandb_mock
     # Also ensure submodules are handled
     sys.modules["wandb.sdk"] = wandb_mock
@@ -32,6 +33,13 @@ def imports():
     sys.modules["wandb.proto"] = wandb_mock
     sys.modules["wandb.proto.wandb_telemetry_pb2"] = wandb_mock
     sys.modules["wandb.util"] = wandb_mock
+
+    # Tensorflow might be broken due to protobuf downgrade in Colab.
+    # We mock it so transformers doesn't crash when trying to import it.
+    try:
+        import tensorflow
+    except Exception:
+        sys.modules["tensorflow"] = MockModule()
 
     try:
         import pytorch_lightning  # noqa: F401
