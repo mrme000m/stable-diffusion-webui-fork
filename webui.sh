@@ -292,6 +292,7 @@ while [[ "$KEEP_GOING" -eq "1" ]]; do
         # Fix wandb for Python 3.12 compatibility
         if [[ -n "$COLAB_JUPYTER_IP" ]] || [[ -d /content ]]; then
             "${python_cmd}" -m pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
+            "${python_cmd}" -m pip install -r requirements_versions.txt -q
         fi
         accelerate launch --num_cpu_threads_per_process=6 "${LAUNCH_SCRIPT}" "$@"
     else
@@ -302,6 +303,7 @@ while [[ "$KEEP_GOING" -eq "1" ]]; do
         # Fix wandb for Python 3.12 compatibility
         if [[ -n "$COLAB_JUPYTER_IP" ]] || [[ -d /content ]]; then
             "${python_cmd}" -m pip install --force-reinstall wandb>=0.16.0 --prefer-binary -q 2>/dev/null || true
+            "${python_cmd}" -m pip install -r requirements_versions.txt -q
         fi
         "${python_cmd}" -u "${LAUNCH_SCRIPT}" "$@"
     fi
