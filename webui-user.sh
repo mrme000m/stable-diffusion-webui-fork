@@ -42,6 +42,9 @@ export venv_dir="-"
 # We set an env var that launch.py can check
 export PIP_PREFER_BINARY=1
 
+# Install compatible wandb version (fixes Python 3.12 ImportErrors)
+pip install --force-reinstall wandb>=0.16.0 --prefer-binary 2>/dev/null || true
+
 # install command for torch
 export TORCH_COMMAND="pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"
 
