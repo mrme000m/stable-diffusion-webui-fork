@@ -22,7 +22,6 @@ if command -v gh &> /dev/null && [[ -n "$GH_TOKEN" ]]; then
     fi
 fi
 
-
 # Install directory without trailing slash
 #install_dir="/home/$(whoami)"
 
@@ -38,6 +37,9 @@ python_cmd="python3"
 
 # python3 venv without trailing slash (defaults to ${install_dir}/${clone_dir}/venv)
 export venv_dir="-"
+
+# Install pre-built tokenizers to avoid build issues
+pip install tokenizers --prefer-binary 2>/dev/null || true
 
 # install command for torch
 export TORCH_COMMAND="pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"
@@ -61,3 +63,4 @@ export TORCH_COMMAND="pip install torch torchvision torchaudio --index-url https
 #export NO_TCMALLOC="True"
 
 ###########################################
+
