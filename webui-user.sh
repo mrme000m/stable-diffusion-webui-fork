@@ -10,22 +10,17 @@
 #clone_dir="stable-diffusion-webui"
 
 # Commandline arguments for webui.py, for example: export COMMANDLINE_ARGS="--medvram --opt-split-attention"
-#export COMMANDLINE_ARGS=""
+export COMMANDLINE_ARGS="--skip-torch-cuda-test --precision full --no-half --use-cpu all --listen --skip-python-version-check"
+export STABLE_DIFFUSION_REPO="https://github.com/w-e-w/stablediffusion.git"
 
 # python3 executable
-#python_cmd="python3"
-
-# git executable
-#export GIT="git"
+python_cmd="python3"
 
 # python3 venv without trailing slash (defaults to ${install_dir}/${clone_dir}/venv)
-#venv_dir="venv"
-
-# script to launch to start the app
-#export LAUNCH_SCRIPT="launch.py"
+export venv_dir="-"
 
 # install command for torch
-#export TORCH_COMMAND="pip install torch==1.12.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113"
+export TORCH_COMMAND="pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"
 
 # Requirements file to use for stable-diffusion-webui
 #export REQS_FILE="requirements_versions.txt"
